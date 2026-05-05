@@ -5,6 +5,16 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --color-white: var(--white);
+  --color-gray-100: var(--gray-100);
+  --color-gray-200: var(--gray-200);
+  --color-gray-700: var(--gray-700);
+  --color-gray-800: var(--gray-800);
+  --color-gray-900: var(--gray-900);
+  --color-accent-500: var(--accent-500);
+  --color-accent-600: var(--accent-600);
+  --color-alert-600: var(--alert-600);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
@@ -49,6 +59,19 @@
 }
 
 :root {
+  --white: #ffffff;
+  --accent-500: #7878d7;
+  --accent-600: #4863f7;
+  --alert-600: #ff5c5c;
+  --gray-100: #737373;
+  --gray-200: #424242;
+  --gray-700: #1a1a1a;
+  --gray-800: #111111;
+  --gray-900: #0b0b0b;
+
+  --accent: oklch(0.97 0 0);
+  --alert: var(--alert-600);
+
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0.008 326);
   --card: oklch(1 0 0);
@@ -122,7 +145,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
   }
   button:not(:disabled),
   [role='button']:not(:disabled) {
