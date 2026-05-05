@@ -1,7 +1,6 @@
 import { CommandIcon, PlusCircleIcon } from '@phosphor-icons/react/dist/ssr'
 import Link from 'next/link'
 
-import { Button } from '../ui/button'
 import {
   Sidebar,
   SidebarFooter,
@@ -33,11 +32,11 @@ export async function AppSidebar() {
         </SidebarMenu>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <Button>
+            <SidebarMenuButton asChild tooltip="New Prompt">
+              <Link href="/prompts/new">
                 <PlusCircleIcon />
                 <span>New Prompt</span>
-              </Button>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
