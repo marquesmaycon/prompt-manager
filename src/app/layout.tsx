@@ -3,6 +3,7 @@ import '@/styles/globals.css';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono, JetBrains_Mono } from 'next/font/google';
 
+import { ThemeProvider } from '@/components/theme-provider';
 import { cn } from '@/lib/utils';
 
 const jetbrainsMono = JetBrains_Mono({
@@ -41,8 +42,24 @@ export default function RootLayout({
         geistMono.variable,
         jetbrainsMono.variable
       )}
+      suppressHydrationWarning
     >
-      <body className="flex min-h-full flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <section className="flex h-screen">
+            <main className="relative min-w-0 flex-1 overflow-auto">
+              <div className="mx-auto h-full max-w-full p-4 sm:p-6 md:max-w-3xl md:p-8">
+                {children}
+              </div>
+            </main>
+          </section>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
