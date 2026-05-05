@@ -6,6 +6,11 @@ import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { render, screen } from '@/lib/test-utils'
 
+const pushMock = jest.fn()
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({ push: pushMock }),
+}))
+
 const renderWithProviders = (component: React.ReactNode) => {
   return render(
     <TooltipProvider>
@@ -35,13 +40,39 @@ const prompts = [
 describe('Sidebar', () => {
   const user = userEvent.setup()
 
-  it('should render a new prompt button and have the correct href attribute', async () => {
-    await makeSut()
+  describe('Header', () => {
+    it('should render a new prompt button and have the correct href attribute', async () => {
+      await makeSut()
 
-    const button = screen.getByRole('link', { name: /New Prompt/i })
+      const button = screen.getByRole('link', { name: /New Prompt/i })
 
-    expect(button).toBeVisible()
-    expect(button).toHaveAttribute('href', '/prompts/new')
+      expect(button).toBeVisible()
+      expect(button).toHaveAttribute('href', '/prompts/new')
+    })
+  })
+
+  describe('Search', () => {
+    it('should update the search input while typing', async () => {
+      await makeSut()
+      const searchInput = screen.getByPlaceholderText(/Search Prompts/i)
+
+      await user.type(searchInput, 'AI')
+
+      expect(searchInput).toHaveValue('AI')
+    })
+
+    it('should send the user to the search page with modified URL', async () => {
+      await makeSut()
+
+      const text = 'AI Prompts'
+      const searchInput = screen.getByPlaceholderText(/Search Prompts/i)
+
+      await user.type(searchInput, text)
+      expect(pushMock).toHaveBeenLastCalledWith(`/?q=${encodeURIComponent(text)}`)
+
+      await user.clear(searchInput)
+      expect(pushMock).toHaveBeenLastCalledWith('/')
+    })
   })
 
   describe('Collapse Button', () => {

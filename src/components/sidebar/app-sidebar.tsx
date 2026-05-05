@@ -10,6 +10,7 @@ import {
   SidebarMenuItem,
 } from '../ui/sidebar'
 import { AppSidebarContent } from './sidebar-content'
+import { SidebarSearch } from './sidebar-search'
 
 export async function AppSidebar() {
   return (
@@ -30,10 +31,13 @@ export async function AppSidebar() {
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
+
+        <SidebarSearch />
+
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild tooltip="New Prompt">
-              <Link href="/prompts/new">
+              <Link href="/prompts/new" className="bg-primary text-primary-foreground transition-colors">
                 <PlusCircleIcon />
                 <span>New Prompt</span>
               </Link>
@@ -41,7 +45,9 @@ export async function AppSidebar() {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <AppSidebarContent />
+
+      <AppSidebarContent prompts={[]} />
+
       <SidebarFooter />
     </Sidebar>
   )
