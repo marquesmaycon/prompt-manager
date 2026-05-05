@@ -7,8 +7,11 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import { render, screen } from '@/lib/test-utils'
 
 const pushMock = jest.fn()
+
+let mockSearchParams = new URLSearchParams()
 jest.mock('next/navigation', () => ({
   useRouter: () => ({ push: pushMock }),
+  useSearchParams: () => mockSearchParams,
 }))
 
 const renderWithProviders = (component: React.ReactNode) => {
@@ -72,6 +75,17 @@ describe('Sidebar', () => {
 
       await user.clear(searchInput)
       expect(pushMock).toHaveBeenLastCalledWith('/')
+    })
+
+    it('should initialize the search input with the query parameter from the URL', async () => {
+      const text = 'Test Query'
+      const params = new URLSearchParams({ q: text })
+      mockSearchParams = params
+
+      await makeSut()
+
+      const searchInput = screen.getByPlaceholderText(/Search Prompts/i)
+      expect(searchInput).toHaveValue(text)
     })
   })
 

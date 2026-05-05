@@ -1,7 +1,7 @@
 'use client'
 
 import { MagnifyingGlassIcon } from '@phosphor-icons/react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import React, { startTransition, useState } from 'react'
 
 import { Label } from '../ui/label'
@@ -9,7 +9,9 @@ import { SidebarGroup, SidebarGroupContent, SidebarInput } from '../ui/sidebar'
 
 export function SidebarSearch() {
   const router = useRouter()
-  const [query, setQuery] = useState('')
+  const params = useSearchParams()
+
+  const [query, setQuery] = useState(params.get('q') || '')
 
   function handleSearchChange(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value
