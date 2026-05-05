@@ -36,7 +36,7 @@ export async function AppSidebar() {
             <SidebarMenuButton asChild>
               <Button>
                 <PlusCircleIcon />
-                <span>Create Prompt</span>
+                <span>New Prompt</span>
               </Button>
             </SidebarMenuButton>
           </SidebarMenuItem>
