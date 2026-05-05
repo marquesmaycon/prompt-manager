@@ -24,7 +24,7 @@ export function SidebarSearch() {
   }
 
   return (
-    <form action="">
+    <form>
       <SidebarGroup className="p-0">
         <SidebarGroupContent className="relative">
           <Label htmlFor="search" className="sr-only">

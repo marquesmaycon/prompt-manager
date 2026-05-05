@@ -1,6 +1,8 @@
 import { CommandIcon, PlusCircleIcon } from '@phosphor-icons/react/dist/ssr'
 import Link from 'next/link'
 
+import { prisma } from '@/lib/prisma'
+
 import {
   Sidebar,
   SidebarFooter,
@@ -13,6 +15,7 @@ import { AppSidebarContent } from './sidebar-content'
 import { SidebarSearch } from './sidebar-search'
 
 export async function AppSidebar() {
+  const prompts = await prisma.prompt.findMany()
   return (
     <Sidebar>
       <SidebarHeader>
@@ -46,7 +49,7 @@ export async function AppSidebar() {
         </SidebarMenu>
       </SidebarHeader>
 
-      <AppSidebarContent prompts={[]} />
+      <AppSidebarContent prompts={prompts} />
 
       <SidebarFooter />
     </Sidebar>

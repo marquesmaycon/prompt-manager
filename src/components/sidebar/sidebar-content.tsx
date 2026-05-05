@@ -25,10 +25,12 @@ export function AppSidebarContent({ prompts }: AppSidebarContentProps) {
       <SidebarGroup className="group-data-[collapsible=icon]:hidden">
         <SidebarGroupLabel>Prompts</SidebarGroupLabel>
         <SidebarMenu>
-          {prompts.map((prompt) => (
-            <SidebarMenuItem key={prompt.id}>
+          {prompts.map(({ id, title }) => (
+            <SidebarMenuItem key={id}>
               <SidebarMenuButton asChild>
-                <Link href={`/prompts/${prompt.id}`}>{prompt.title}</Link>
+                <Link href={`/prompts/${id}`} className="truncate">
+                  {title}
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
