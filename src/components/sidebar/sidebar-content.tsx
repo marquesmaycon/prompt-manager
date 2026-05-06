@@ -1,22 +1,16 @@
-import Link from 'next/link'
+import type { PromptSummary } from '@/core/domain/prompts/prompt.entity'
 
+import { PromptListItem } from '../prompts/prompt-list-item'
 import {
   SidebarContent,
   SidebarGroup,
+  SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from '../ui/sidebar'
 
-type Prompt = {
-  id: string
-  title: string
-  content: string
-}
-
 export type AppSidebarContentProps = {
-  prompts: Prompt[]
+  prompts: PromptSummary[]
 }
 
 export function AppSidebarContent({ prompts }: AppSidebarContentProps) {
@@ -24,17 +18,15 @@ export function AppSidebarContent({ prompts }: AppSidebarContentProps) {
     <SidebarContent>
       <SidebarGroup className="group-data-[collapsible=icon]:hidden">
         <SidebarGroupLabel>Prompts</SidebarGroupLabel>
-        <SidebarMenu>
-          {prompts.map(({ id, title }) => (
-            <SidebarMenuItem key={id}>
-              <SidebarMenuButton asChild>
-                <Link href={`/prompts/${id}`} className="truncate">
-                  {title}
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
+        <SidebarGroupContent>
+          <nav aria-label="Prompts list">
+            <SidebarMenu>
+              {prompts.map((p) => (
+                <PromptListItem key={p.id} prompt={p} />
+              ))}
+            </SidebarMenu>
+          </nav>
+        </SidebarGroupContent>
       </SidebarGroup>
     </SidebarContent>
   )

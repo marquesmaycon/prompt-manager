@@ -4,14 +4,17 @@ import { MagnifyingGlassIcon } from '@phosphor-icons/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { startTransition, useState } from 'react'
 
+import { cn } from '@/lib/utils'
+
 import { Label } from '../ui/label'
-import { SidebarGroup, SidebarGroupContent, SidebarInput } from '../ui/sidebar'
+import { SidebarGroup, SidebarGroupContent, SidebarInput, useSidebar } from '../ui/sidebar'
 
 export function SidebarSearch() {
   const router = useRouter()
   const params = useSearchParams()
 
   const [query, setQuery] = useState(params.get('q') || '')
+  const { open } = useSidebar()
 
   function handleSearchChange(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value
@@ -24,7 +27,7 @@ export function SidebarSearch() {
   }
 
   return (
-    <form>
+    <form className={cn(!open && 'hidden')}>
       <SidebarGroup className="p-0">
         <SidebarGroupContent className="relative">
           <Label htmlFor="search" className="sr-only">

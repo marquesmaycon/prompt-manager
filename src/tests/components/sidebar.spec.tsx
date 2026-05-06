@@ -1,18 +1,32 @@
 import userEvent from '@testing-library/user-event'
 
 import { AppSidebar } from '@/components/sidebar/app-sidebar'
-import { AppSidebarContent, type AppSidebarContentProps } from '@/components/sidebar/sidebar-content'
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { render, screen } from '@/lib/test-utils'
 
 const pushMock = jest.fn()
-
 let mockSearchParams = new URLSearchParams()
+
 jest.mock('next/navigation', () => ({
   useRouter: () => ({ push: pushMock }),
   useSearchParams: () => mockSearchParams,
 }))
+jest.mock('@/lib/prisma', () => ({
+  prisma: {
+    prompt: {
+      findMany: jest.fn().mockResolvedValue(getPrompts()),
+    },
+  },
+}))
+
+function getPrompts() {
+  return [
+    { id: '1', title: 'Prompt 1', content: 'Content 1' },
+    { id: '2', title: 'Prompt 2', content: 'Content 2' },
+    { id: '3', title: 'Prompt 3', content: 'Content 3' },
+  ]
+}
 
 const renderWithProviders = (component: React.ReactNode) => {
   return render(
@@ -29,16 +43,6 @@ const makeSut = async () => {
   const appSidebar = await AppSidebar()
   return renderWithProviders(appSidebar)
 }
-
-const makeSutContent = (prompts: AppSidebarContentProps['prompts']) => {
-  const appSidebarContent = AppSidebarContent({ prompts })
-  return renderWithProviders(appSidebarContent)
-}
-
-const prompts = [
-  { id: '1', title: 'Prompt 1', content: 'Content 1' },
-  { id: '2', title: 'Prompt 2', content: 'Content 2' },
-]
 
 describe('Sidebar', () => {
   const user = userEvent.setup()
@@ -90,9 +94,14 @@ describe('Sidebar', () => {
   })
 
   describe('Collapse Button', () => {
-    it('should init expanded and show the collapse button', async () => {
+    it('should show the toggle button when collapsed', async () => {
       await makeSut()
-      expect(screen.getByRole('button', { name: /Toggle Sidebar/i })).toBeVisible()
+
+      const toggleButton = screen.getByRole('button', { name: /Toggle Sidebar/i })
+
+      await user.click(toggleButton)
+
+      expect(toggleButton).toBeVisible()
     })
 
     it('should collapse and expand the sidebar when the toggle button is clicked', async () => {
@@ -109,9 +118,10 @@ describe('Sidebar', () => {
   })
 
   describe('Content', () => {
-    it('should render the prompts list', () => {
-      const { container } = makeSutContent(prompts)
-      expect(container.querySelectorAll('a')).toHaveLength(prompts.length)
+    it('should render the prompts list', async () => {
+      const { container } = await makeSut()
+
+      expect(container.querySelectorAll('[aria-label="Prompts list"] a')).toHaveLength(getPrompts().length)
     })
   })
 })

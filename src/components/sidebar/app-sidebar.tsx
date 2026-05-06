@@ -16,6 +16,7 @@ import { SidebarSearch } from './sidebar-search'
 
 export async function AppSidebar() {
   const prompts = await prisma.prompt.findMany()
+
   return (
     <Sidebar>
       <SidebarHeader>
@@ -23,7 +24,7 @@ export async function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link href="/">
-                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+                <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center">
                   <CommandIcon className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
@@ -40,7 +41,11 @@ export async function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild tooltip="New Prompt">
-              <Link href="/prompts/new" className="bg-primary text-primary-foreground transition-colors">
+              <Link
+                href="/prompts/new"
+                className="bg-primary text-primary-foreground transition-colors"
+                aria-label="New Prompt"
+              >
                 <PlusCircleIcon />
                 <span>New Prompt</span>
               </Link>
