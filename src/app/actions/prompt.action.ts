@@ -10,15 +10,15 @@ type SearchFormState = {
 }
 
 export async function searchPromptAction(_: SearchFormState, formData: FormData): Promise<SearchFormState> {
-  const term = String(formData.get('term')).trim()
+  const query = String(formData.get('q')).trim()
 
   try {
     const prompts = await prisma.prompt.findMany({
-      where: term
+      where: query
         ? {
             OR: [
-              { title: { contains: term, mode: 'insensitive' } },
-              { description: { contains: term, mode: 'insensitive' } },
+              { title: { contains: query, mode: 'insensitive' } },
+              { content: { contains: query, mode: 'insensitive' } },
             ],
           }
         : undefined,
