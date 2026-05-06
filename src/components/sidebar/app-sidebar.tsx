@@ -3,6 +3,7 @@ import Link from 'next/link'
 
 import { prisma } from '@/lib/prisma'
 
+import { ThemeSwitcher } from '../theme-switcher'
 import {
   Sidebar,
   SidebarFooter,
@@ -36,7 +37,7 @@ export async function AppSidebar() {
           </SidebarMenuItem>
         </SidebarMenu>
 
-        <SidebarSearch />
+        <SidebarSearch prompts={prompts} />
 
         <SidebarMenu>
           <SidebarMenuItem>
@@ -56,7 +57,15 @@ export async function AppSidebar() {
 
       <AppSidebarContent prompts={prompts} />
 
-      <SidebarFooter />
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild tooltip="Theme Switcher">
+              <ThemeSwitcher />
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   )
 }

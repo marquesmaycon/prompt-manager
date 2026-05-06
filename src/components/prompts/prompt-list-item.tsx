@@ -15,9 +15,11 @@ export function PromptListItem({ prompt: { id, title, content } }: PromptListIte
     <SidebarMenuItem className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground flex gap-2 border-b p-4 text-sm last:border-b-0">
       <Link href={`/prompts/${id}`}>
         <span className="line-clamp-2 font-bold">{title}</span>
-        <span className="line-clamp-2 w-65 text-xs whitespace-break-spaces">{content}</span>
+        <span className="text-muted-foreground line-clamp-2 w-65 text-xs whitespace-break-spaces">
+          {content}
+        </span>
       </Link>
-      <Button className="" aria-label="nov" size="icon-xs" variant="destructive">
+      <Button className="" size="icon-xs" variant="destructive">
         <TrashIcon />
       </Button>
     </SidebarMenuItem>
