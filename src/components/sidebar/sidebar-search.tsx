@@ -4,7 +4,7 @@ import { MagnifyingGlassIcon } from '@phosphor-icons/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { startTransition, useActionState, useRef, useState } from 'react'
 
-import { searchPromptAction } from '@/app/actions/prompt.action'
+import { searchPromptAction } from '@/app/actions/prompt.actions'
 import type { PromptSummary } from '@/core/domain/prompts/prompt.entity'
 import { cn } from '@/lib/utils'
 

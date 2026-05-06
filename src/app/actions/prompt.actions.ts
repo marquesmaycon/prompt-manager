@@ -1,6 +1,6 @@
 'use server'
 
-import { SearchPromptsUseCase } from '@/core/domain/application/prompts/search-prompts.use-case'
+import { SearchPromptsUseCase } from '@/core/application/prompts/search-prompts.use-case'
 import type { PromptSummary } from '@/core/domain/prompts/prompt.entity'
 import { PrismaPromptRepository } from '@/infra/repository/prisma-prompt.repository'
 import { prisma } from '@/lib/prisma'
@@ -29,6 +29,6 @@ export async function searchPromptAction(_: SearchFormState, formData: FormData)
     return { success: true, prompts }
   } catch (error) {
     console.error('Error searching prompts:', error)
-    return { success: false, message: 'An error occurred while searching for prompts.' }
+    return { success: false, message: 'Falha ao buscar prompts.' }
   }
 }

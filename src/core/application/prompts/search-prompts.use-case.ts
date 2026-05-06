@@ -1,10 +1,10 @@
-import type { PromptRepository } from '../../prompts/prompt.repository'
+import type { PromptRepository } from '../../domain/prompts/prompt.repository'
 
 export class SearchPromptsUseCase {
   constructor(private promptRepository: PromptRepository) {}
 
-  async execute(term: string) {
-    const q = term.trim()
+  async execute(term?: string) {
+    const q = term?.trim()
 
     if (!q) {
       return this.promptRepository.findMany()
