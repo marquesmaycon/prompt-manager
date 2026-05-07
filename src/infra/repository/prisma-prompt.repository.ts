@@ -10,12 +10,13 @@ export class PrismaPromptRepository implements PromptRepository {
   }
 
   async searchMany(term: string): Promise<Prompt[]> {
+    const normalizedTerm = term.trim()
     return await this.prisma.prompt.findMany({
-      where: term
+      where: normalizedTerm
         ? {
             OR: [
-              { title: { contains: term, mode: 'insensitive' } },
-              { content: { contains: term, mode: 'insensitive' } },
+              { title: { contains: normalizedTerm, mode: 'insensitive' } },
+              { content: { contains: normalizedTerm, mode: 'insensitive' } },
             ],
           }
         : undefined,
