@@ -4,7 +4,7 @@ import { Sidebar } from '../ui/sidebar'
 import { AppSidebarContent } from './sidebar-content'
 
 export async function AppSidebar() {
-  const prompts = await prisma.prompt.findMany()
+  const prompts = await prisma.prompt.findMany({ orderBy: { createdAt: 'desc' } })
 
   return (
     <Sidebar>

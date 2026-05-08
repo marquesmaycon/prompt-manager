@@ -1,17 +1,21 @@
-import { searchPromptAction } from '@/app/actions/prompt.actions'
+import { createPromptAction, searchPromptAction } from '@/app/actions/prompt.actions'
 
 jest.mock('@/lib/prisma', () => ({ prisma: {} }))
 
 const mockedSearchExecute = jest.fn()
+const mockedCreateExecute = jest.fn()
 
 jest.mock('@/core/application/prompts/search-prompts.use-case', () => ({
   SearchPromptsUseCase: jest.fn().mockImplementation(() => ({ execute: mockedSearchExecute })),
 }))
+jest.mock('@/core/application/prompts/create-prompt.use-case', () => ({
+  CreatePromptUseCase: jest.fn().mockImplementation(() => ({ execute: mockedCreateExecute })),
+}))
 
-describe('Server Actions: Prompts', () => {
+describe('Prompt Actions', () => {
   beforeEach(() => {
-    ''
     mockedSearchExecute.mockReset()
+    mockedCreateExecute.mockReset()
   })
 
   describe('searchPromptAction', () => {
@@ -84,6 +88,50 @@ describe('Server Actions: Prompts', () => {
       expect(mockedSearchExecute).toHaveBeenCalledWith('')
       expect(result.success).toBe(true)
       expect(result.prompts).toEqual(input)
+    })
+  })
+
+  describe('createPromptAction', () => {
+    it('it should successfully create a new prompt', async () => {
+      mockedCreateExecute.mockResolvedValue(undefined)
+
+      const data = { title: 'title', content: 'content' }
+      const result = await createPromptAction(data)
+
+      expect(result?.success).toBe(true)
+      expect(result?.message).toBe('Prompt successfully created.')
+    })
+
+    it('should return validation error when payload fields is empty', async () => {
+      const data = {
+        title: '',
+        content: '',
+      }
+
+      const result = await createPromptAction(data)
+
+      expect(result?.success).toBe(false)
+      expect(result?.message).toBe('Erro de validação')
+      expect(result?.errors).toBeDefined()
+    })
+
+    it('should return error message when PROMPT_ALREADY_EXISTS IS is thrown', async () => {
+      mockedCreateExecute.mockRejectedValue(new Error('PROMPT_ALREADY_EXISTS'))
+
+      const result = await createPromptAction({ title: 'duplicated', content: 'duplicated' })
+
+      expect(result?.success).toBe(false)
+      expect(result?.message).toBe('Prompt already exists.')
+    })
+
+    it('it should return a generic error when failing to create a new prompt', async () => {
+      mockedCreateExecute.mockRejectedValue(new Error('UNKNOWN'))
+
+      const data = { title: 'title', content: 'content' }
+      const result = await createPromptAction(data)
+
+      expect(result?.success).toBe(false)
+      expect(result?.message).toBe('Failed to create new prompt.')
     })
   })
 })

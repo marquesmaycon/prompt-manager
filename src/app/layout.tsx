@@ -53,8 +53,8 @@ export default function RootLayout({
             <SidebarProvider>
               <AppSidebar />
               <SidebarInset>
+                <SidebarTrigger />
                 <section className="flex h-screen px-4">
-                  <SidebarTrigger />
                   <main className="relative min-w-0 flex-1 overflow-auto">
                     <div className="mx-auto h-full max-w-full p-4 sm:p-6 md:max-w-3xl md:p-8">{children}</div>
                   </main>
