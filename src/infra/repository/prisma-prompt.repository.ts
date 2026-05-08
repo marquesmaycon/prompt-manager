@@ -9,8 +9,8 @@ export class PrismaPromptRepository implements PromptRepository {
     return await this.prisma.prompt.findMany({ orderBy: { createdAt: 'desc' } })
   }
 
-  async searchMany(term: string): Promise<Prompt[]> {
-    const normalizedTerm = term.trim()
+  async searchMany(term?: string): Promise<Prompt[]> {
+    const normalizedTerm = term?.trim()
     return await this.prisma.prompt.findMany({
       where: normalizedTerm
         ? {

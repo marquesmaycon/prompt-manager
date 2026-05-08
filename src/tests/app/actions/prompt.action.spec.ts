@@ -44,7 +44,7 @@ describe('Server Actions: Prompts', () => {
 
     it('deve retornar um erro genérico quando falhar ao buscar', async () => {
       const error = new Error('UNKNOWN')
-      mockedSearchExecute.mockResolvedValue(error)
+      mockedSearchExecute.mockRejectedValue(error)
 
       const formData = new FormData()
       formData.append('q', 'error')

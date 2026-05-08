@@ -47,11 +47,15 @@ const makeSut = async () => {
 describe('Sidebar', () => {
   const user = userEvent.setup()
 
+  beforeEach(() => {
+    mockSearchParams = new URLSearchParams()
+  })
+
   describe('Header', () => {
     it('should render a new prompt button and have the correct href attribute', async () => {
       await makeSut()
 
-      const button = screen.getByRole('link', { name: /New Prompt/i })
+      const button = await screen.findByRole('link', { name: /New Prompt/i })
 
       expect(button).toBeVisible()
       expect(button).toHaveAttribute('href', '/prompts/new')
@@ -61,7 +65,7 @@ describe('Sidebar', () => {
   describe('Search', () => {
     it('should update the search input while typing', async () => {
       await makeSut()
-      const searchInput = screen.getByPlaceholderText(/Search Prompts/i)
+      const searchInput = await screen.findByPlaceholderText(/Search Prompts/i)
 
       await user.type(searchInput, 'AI')
 
@@ -72,7 +76,7 @@ describe('Sidebar', () => {
       await makeSut()
 
       const text = 'AI Prompts'
-      const searchInput = screen.getByPlaceholderText(/Search Prompts/i)
+      const searchInput = await screen.findByPlaceholderText(/Search Prompts/i)
 
       await user.type(searchInput, text)
       expect(pushMock).toHaveBeenLastCalledWith(`/?q=${encodeURIComponent(text)}`)
@@ -88,8 +92,35 @@ describe('Sidebar', () => {
 
       await makeSut()
 
-      const searchInput = screen.getByPlaceholderText(/Search Prompts/i)
+      const searchInput = await screen.findByPlaceholderText(/Search Prompts/i)
       expect(searchInput).toHaveValue(text)
+    })
+
+    it('deveria submeter o form ao digitar no campo de busca', async () => {
+      const submitSpy = jest
+        .spyOn(HTMLFormElement.prototype, 'requestSubmit')
+        .mockImplementation(() => undefined)
+      await makeSut()
+
+      const searchInput = await screen.findByPlaceholderText('Search Prompts')
+
+      await user.type(searchInput, 'AI')
+
+      expect(submitSpy).toHaveBeenCalled()
+      submitSpy.mockRestore()
+    })
+
+    it('deveria submeter automaticamente ao montar quando houver query', async () => {
+      const submitSpy = jest
+        .spyOn(HTMLFormElement.prototype, 'requestSubmit')
+        .mockImplementation(() => undefined)
+      const text = 'text'
+      const searchParams = new URLSearchParams(`q=${text}`)
+      mockSearchParams = searchParams
+      await makeSut()
+
+      expect(submitSpy).toHaveBeenCalled()
+      submitSpy.mockRestore()
     })
   })
 
@@ -97,7 +128,7 @@ describe('Sidebar', () => {
     it('should show the toggle button when collapsed', async () => {
       await makeSut()
 
-      const toggleButton = screen.getByRole('button', { name: /Toggle Sidebar/i })
+      const toggleButton = await screen.findByRole('button', { name: /Toggle Sidebar/i })
 
       await user.click(toggleButton)
 
@@ -107,13 +138,25 @@ describe('Sidebar', () => {
     it('should collapse and expand the sidebar when the toggle button is clicked', async () => {
       const { container } = await makeSut()
 
-      const toggleButton = screen.getByRole('button', { name: /Toggle Sidebar/i })
+      const toggleButton = await screen.findByRole('button', { name: /Toggle Sidebar/i })
 
       await user.click(toggleButton)
       expect(container.querySelector('[data-state="collapsed"]')).toBeInTheDocument()
 
       await user.click(toggleButton)
       expect(container.querySelector('[data-state="expanded"]')).toBeInTheDocument()
+    })
+
+    it('deveria reexpandir ao clicar no botão de expandir', async () => {
+      await makeSut()
+      const collapseButton = await screen.findByRole('button', {
+        name: /Toggle Sidebar/i,
+      })
+      await user.click(collapseButton)
+      await user.click(collapseButton)
+
+      expect(await screen.findByRole('button', { name: /Toggle Sidebar/i })).toBeVisible()
+      expect(await screen.findByRole('navigation', { name: 'Prompts list' })).toBeVisible()
     })
   })
 

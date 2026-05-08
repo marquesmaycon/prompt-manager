@@ -4,7 +4,7 @@ import { CommandIcon, MagnifyingGlassIcon, PlusCircleIcon } from '@phosphor-icon
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useRouter } from 'next/navigation'
-import { startTransition, useActionState, useRef, useState } from 'react'
+import { startTransition, useActionState, useEffect, useRef, useState } from 'react'
 
 import { searchPromptAction } from '@/app/actions/prompt.actions'
 import type { PromptSummary } from '@/core/domain/prompts/prompt.entity'
@@ -42,7 +42,14 @@ export function AppSidebarContent({ prompts }: AppSidebarContentProps) {
   const [searchState, action, isPending] = useActionState(searchPromptAction, { success: true, prompts })
   const [query, setQuery] = useState(searchParams.get('q') ?? '')
 
-  const promptsList = query.trim().trim().length > 1 ? (searchState.prompts ?? prompts) : prompts
+  const hasQuery = query.trim().length > 0
+
+  useEffect(() => {
+    if (!hasQuery) return
+    formRef.current?.requestSubmit()
+  }, [hasQuery])
+
+  const promptsList = hasQuery ? (searchState.prompts ?? prompts) : prompts
 
   function handleSearchChange(e: React.ChangeEvent<HTMLInputElement>) {
     const value = e.target.value
