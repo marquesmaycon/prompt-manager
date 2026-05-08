@@ -5,11 +5,7 @@ import { Geist, Geist_Mono, JetBrains_Mono } from 'next/font/google'
 
 import { AppSidebar } from '@/components/sidebar/app-sidebar'
 import { ThemeProvider } from '@/components/theme-provider'
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from '@/components/ui/sidebar'
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 
@@ -52,22 +48,15 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <TooltipProvider>
             <SidebarProvider>
               <AppSidebar />
               <SidebarInset>
-                <section className="flex h-screen">
+                <section className="flex h-screen px-4">
+                  <SidebarTrigger />
                   <main className="relative min-w-0 flex-1 overflow-auto">
-                    <div className="mx-auto h-full max-w-full p-4 sm:p-6 md:max-w-3xl md:p-8">
-                      <SidebarTrigger />
-                      {children}
-                    </div>
+                    <div className="mx-auto h-full max-w-full p-4 sm:p-6 md:max-w-3xl md:p-8">{children}</div>
                   </main>
                 </section>
               </SidebarInset>

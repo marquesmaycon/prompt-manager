@@ -58,7 +58,7 @@ describe('Sidebar', () => {
       const button = await screen.findByRole('link', { name: /New Prompt/i })
 
       expect(button).toBeVisible()
-      expect(button).toHaveAttribute('href', '/prompts/new')
+      expect(button).toHaveAttribute('href', '/new')
     })
   })
 

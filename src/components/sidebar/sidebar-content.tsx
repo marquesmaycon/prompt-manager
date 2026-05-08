@@ -106,7 +106,7 @@ export function AppSidebarContent({ prompts }: AppSidebarContentProps) {
           <SidebarMenuItem>
             <SidebarMenuButton asChild tooltip="New Prompt">
               <Link
-                href="/prompts/new"
+                href="/new"
                 className="bg-primary text-primary-foreground transition-colors"
                 aria-label="New Prompt"
               >
