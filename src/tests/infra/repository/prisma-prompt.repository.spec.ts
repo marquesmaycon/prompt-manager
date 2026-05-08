@@ -1,8 +1,11 @@
-import { Prompt } from '@/core/domain/prompts/prompt.entity'
+import type { CreatePromptDTO } from '@/core/application/prompts/create-prompt.dto'
+import { Prompt, type PromptSummary } from '@/core/domain/prompts/prompt.entity'
 import { PrismaClient } from '@/generated/prisma/client'
 import { PrismaPromptRepository } from '@/infra/repository/prisma-prompt.repository'
 
 type PromptDelegateMock = {
+  create: jest.MockedFunction<(args: { data: CreatePromptDTO }) => Prompt>
+  findFirst: jest.MockedFunction<(args: { where: { title: string } }) => Promise<PromptSummary>>
   findMany: jest.MockedFunction<
     (args: {
       orderBy?: { createdAt: 'asc' | 'desc' }
@@ -23,7 +26,9 @@ type PrismaMock = {
 function createMockPrisma() {
   const mock: PrismaMock = {
     prompt: {
+      create: jest.fn(),
       findMany: jest.fn(),
+      findFirst: jest.fn(),
     },
   }
 
@@ -37,6 +42,28 @@ describe('PrismaPromptRepository', () => {
   beforeEach(() => {
     prisma = createMockPrisma()
     repository = new PrismaPromptRepository(prisma)
+  })
+
+  describe('create', () => {
+    it('should call created methos with proper data', async () => {
+      const data = { title: 'title', content: 'content' }
+
+      await repository.create(data)
+
+      expect(prisma.prompt.create).toHaveBeenCalledWith({ data })
+    })
+  })
+
+  describe('findByTitle', () => {
+    it('should call findByTitle with the proper title', async () => {
+      const input = { id: '1', title: 'Title 01', content: 'c' }
+      prisma.prompt.findFirst.mockResolvedValue(input)
+
+      const result = await repository.findByTitle(input.title)
+
+      expect(prisma.prompt.findFirst).toHaveBeenCalledWith({ where: { title: input.title } })
+      expect(result).toBe(input)
+    })
   })
 
   describe('findMany', () => {

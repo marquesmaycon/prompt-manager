@@ -19,7 +19,7 @@ export function PromptListItem({ prompt: { id, title, content } }: PromptListIte
           {content}
         </span>
       </Link>
-      <Button className="" size="icon-xs" variant="destructive">
+      <Button className="ml-auto" size="icon-xs" variant="destructive">
         <TrashIcon />
       </Button>
     </SidebarMenuItem>

@@ -2,6 +2,7 @@ import '@/styles/globals.css'
 
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono, JetBrains_Mono } from 'next/font/google'
+import { Toaster } from 'sonner'
 
 import { AppSidebar } from '@/components/sidebar/app-sidebar'
 import { ThemeProvider } from '@/components/theme-provider'
@@ -61,6 +62,7 @@ export default function RootLayout({
                 </section>
               </SidebarInset>
             </SidebarProvider>
+            <Toaster position="top-right" />
           </TooltipProvider>
         </ThemeProvider>
       </body>
