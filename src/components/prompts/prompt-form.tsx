@@ -2,12 +2,13 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, useForm, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
 
 import { createPromptAction } from '@/app/actions/prompt.actions'
 import { type CreatePromptDTO, createPromptSchema } from '@/core/application/prompts/create-prompt.dto'
 
+import { CopyButton } from '../button-actions'
 import { Button } from '../ui/button'
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '../ui/field'
 import { Input } from '../ui/input'
@@ -23,6 +24,8 @@ export function PromptForm() {
       content: '',
     },
   })
+
+  const { content } = useWatch({ control: form.control })
 
   const submit = async (data: CreatePromptDTO) => {
     const result = await createPromptAction(data)
@@ -40,6 +43,7 @@ export function PromptForm() {
   return (
     <form onSubmit={form.handleSubmit(submit)}>
       <header className="mb-6 flex flex-wrap items-center justify-end gap-2">
+        <CopyButton content={content} />
         <Button type="submit" size="sm">
           Save
         </Button>
