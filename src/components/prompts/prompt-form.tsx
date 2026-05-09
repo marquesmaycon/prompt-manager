@@ -17,15 +17,12 @@ import { Textarea } from '../ui/textarea'
 export function PromptForm() {
   const router = useRouter()
 
-  const form = useForm<CreatePromptDTO>({
+  const { control, reset, handleSubmit } = useForm<CreatePromptDTO>({
     resolver: zodResolver(createPromptSchema),
-    defaultValues: {
-      title: '',
-      content: '',
-    },
+    defaultValues: { title: '', content: '' },
   })
 
-  const { content } = useWatch({ control: form.control })
+  const content = useWatch({ control, name: 'content' })
 
   const submit = async (data: CreatePromptDTO) => {
     const result = await createPromptAction(data)
@@ -35,13 +32,13 @@ export function PromptForm() {
       return
     }
 
+    reset()
     toast.success(result.message)
-    form.reset()
     router.refresh()
   }
 
   return (
-    <form onSubmit={form.handleSubmit(submit)}>
+    <form onSubmit={handleSubmit(submit)}>
       <header className="mb-6 flex flex-wrap items-center justify-end gap-2">
         <CopyButton content={content} />
         <Button type="submit" size="sm">
@@ -51,7 +48,7 @@ export function PromptForm() {
       <FieldGroup>
         <Controller
           name="title"
-          control={form.control}
+          control={control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor="title">Title</FieldLabel>
@@ -64,7 +61,7 @@ export function PromptForm() {
 
         <Controller
           name="content"
-          control={form.control}
+          control={control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor="content">Content</FieldLabel>
