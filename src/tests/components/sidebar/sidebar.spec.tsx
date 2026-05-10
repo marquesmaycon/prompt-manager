@@ -54,6 +54,15 @@ describe('Sidebar', () => {
   })
 
   describe('Header', () => {
+    it('deveria renderizar o link para home com texto', async () => {
+      const { container } = await makeSut()
+
+      const link = container.querySelector('[data-logo]')
+
+      expect(link).toBeVisible()
+      expect(link).toHaveAttribute('href', '/')
+    })
+
     it('should render a new prompt button and have the correct href attribute', async () => {
       await makeSut()
 
