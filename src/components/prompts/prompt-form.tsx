@@ -5,8 +5,9 @@ import { useRouter } from 'next/navigation'
 import { Controller, useForm, useWatch } from 'react-hook-form'
 import { toast } from 'sonner'
 
-import { createPromptAction } from '@/app/actions/prompt.actions'
+import { createPromptAction, updatePromptAction } from '@/app/actions/prompt.actions'
 import { type CreatePromptDTO, createPromptSchema } from '@/core/application/prompts/create-prompt.dto'
+import type { Prompt } from '@/generated/prisma'
 
 import { CopyButton } from '../button-actions'
 import { Button } from '../ui/button'
@@ -14,25 +15,33 @@ import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '../
 import { Input } from '../ui/input'
 import { Textarea } from '../ui/textarea'
 
-export function PromptForm() {
+type PromptFormProps = {
+  prompt?: Prompt | null
+}
+
+export const PromptForm = ({ prompt }: PromptFormProps) => {
   const router = useRouter()
 
   const { control, reset, handleSubmit } = useForm<CreatePromptDTO>({
     resolver: zodResolver(createPromptSchema),
-    defaultValues: { title: '', content: '' },
+    defaultValues: { title: prompt?.title || '', content: prompt?.content || '' },
   })
 
   const content = useWatch({ control, name: 'content' })
 
+  const isEdit = !!prompt?.id
+
   const submit = async (data: CreatePromptDTO) => {
-    const result = await createPromptAction(data)
+    const result = isEdit
+      ? await updatePromptAction({ id: prompt.id, ...data })
+      : await createPromptAction(data)
 
     if (!result.success) {
       toast.error(result.message)
       return
     }
 
-    reset()
+    if (!isEdit) reset()
     toast.success(result.message)
     router.refresh()
   }
