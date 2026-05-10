@@ -15,7 +15,7 @@ import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '../
 import { Input } from '../ui/input'
 import { Textarea } from '../ui/textarea'
 
-type PromptFormProps = {
+export type PromptFormProps = {
   prompt?: Prompt | null
 }
 

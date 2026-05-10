@@ -2,24 +2,28 @@ import userEvent from '@testing-library/user-event'
 import { mocked } from 'jest-mock'
 import { toast } from 'sonner'
 
-import { createPromptAction } from '@/app/actions/prompt.actions'
-import { PromptForm } from '@/components/prompts/prompt-form'
+import { createPromptAction, updatePromptAction } from '@/app/actions/prompt.actions'
+import { PromptForm, type PromptFormProps } from '@/components/prompts/prompt-form'
 import { render, screen } from '@/lib/test-utils'
 
 const refreshMock = jest.fn()
 
 jest.mock('next/navigation', () => ({ useRouter: () => ({ refresh: refreshMock }) }))
-jest.mock('@/app/actions/prompt.actions', () => ({ createPromptAction: jest.fn() }))
+jest.mock('@/app/actions/prompt.actions', () => ({
+  createPromptAction: jest.fn(),
+  updatePromptAction: jest.fn(),
+}))
 jest.mock('sonner', () => ({ toast: { success: jest.fn(), error: jest.fn() } }))
 
 const mockedCreatePromptAction = mocked(createPromptAction)
+const mockedUpdatePromptAction = mocked(updatePromptAction)
 const mockedToastSuccess = mocked(toast.success)
 const mockedToastError = mocked(toast.error)
 
-const setup = async () => {
+const setup = async ({ prompt }: PromptFormProps = {}) => {
   const user = userEvent.setup()
 
-  render(<PromptForm />)
+  render(<PromptForm prompt={prompt} />)
 
   const title = screen.getByLabelText(/title/i)
   const content = screen.getByLabelText(/content/i)
@@ -69,5 +73,33 @@ describe('PromptForm', () => {
 
     expect(mockedToastError).toHaveBeenCalledWith(errorMsg)
     expect(refreshMock).not.toHaveBeenCalled()
+  })
+
+  it('deve atualizar um prompt existente com success', async () => {
+    mockedUpdatePromptAction.mockResolvedValueOnce({
+      success: true,
+      message: 'Prompt successfully updated.',
+    })
+    const now = new Date()
+    const prompt = { id: '1', title: 'old', content: 'old', createdAt: now, updatedAt: now }
+    const { user, title, content, submitForm } = await setup({ prompt })
+
+    const updatedData = { title: 'new title', content: 'new content' }
+
+    await user.clear(title)
+    await user.type(title, updatedData.title)
+
+    await user.clear(content)
+    await user.type(content, updatedData.content)
+
+    await submitForm()
+
+    expect(mockedUpdatePromptAction).toHaveBeenCalledWith({
+      id: prompt.id,
+      title: updatedData.title,
+      content: updatedData.content,
+    })
+    expect(toast.success).toHaveBeenCalledWith('Prompt successfully updated.')
+    expect(refreshMock).toHaveBeenCalledTimes(1)
   })
 })
