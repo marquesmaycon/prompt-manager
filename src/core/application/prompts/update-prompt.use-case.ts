@@ -9,6 +9,6 @@ export class UpdatePromptUseCase {
 
     if (!prompt) throw new Error('PROMPT_NOT_FOUND')
 
-    await this.promptRepository.update(data)
+    return await this.promptRepository.update(data)
   }
 }
