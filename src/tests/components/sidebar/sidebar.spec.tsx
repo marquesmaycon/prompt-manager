@@ -1,6 +1,7 @@
 import userEvent from '@testing-library/user-event'
 
 import { AppSidebar } from '@/components/sidebar/app-sidebar'
+import { AppSidebarContent } from '@/components/sidebar/sidebar-content'
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { render, screen } from '@/lib/test-utils'
@@ -12,6 +13,7 @@ jest.mock('next/navigation', () => ({
   useRouter: () => ({ push: pushMock }),
   useSearchParams: () => mockSearchParams,
 }))
+
 jest.mock('@/lib/prisma', () => ({
   prisma: {
     prompt: {
@@ -165,6 +167,23 @@ describe('Sidebar', () => {
       const { container } = await makeSut()
 
       expect(container.querySelectorAll('[aria-label="Prompts list"] a')).toHaveLength(getPrompts().length)
+    })
+
+    it('deveria renderizar lista com os prompts', () => {
+      const prompts = getPrompts()
+      const { container } = renderWithProviders(<AppSidebarContent prompts={prompts} />)
+
+      expect(container.querySelectorAll('[aria-label="Prompts list"] li')).toHaveLength(getPrompts().length)
+
+      expect(screen.getByText(prompts[0].title)).toBeInTheDocument()
+      expect(screen.getByText(prompts[1].title)).toBeInTheDocument()
+    })
+
+    it('não deveria renderizar lista quando não houver prompts', () => {
+      const { container } = renderWithProviders(<AppSidebarContent prompts={[]} />)
+
+      expect(screen.getAllByRole('navigation')).toHaveLength(1)
+      expect(container.querySelectorAll('[aria-label="Prompts list"] li')).toHaveLength(0)
     })
   })
 })
