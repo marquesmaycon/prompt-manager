@@ -13,7 +13,12 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    'coverage/**'
+    'coverage/**',
+    '.next/**',
+    'playwright-report/**',
+    'test-results/**',
+    'dist/**',
+    'src/generated/'
   ]),
   {
     plugins: {
