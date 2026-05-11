@@ -20,6 +20,7 @@ type PromptDelegateMock = {
       }
     }) => Promise<Prompt[]>
   >
+  delete: jest.MockedFunction<(args: { where: { id: string } }) => Promise<void>>
 }
 
 type PrismaMock = {
@@ -34,6 +35,7 @@ function createMockPrisma() {
       findMany: jest.fn(),
       findFirst: jest.fn(),
       findUnique: jest.fn(),
+      delete: jest.fn(),
     },
   }
 
@@ -229,6 +231,17 @@ describe('PrismaPromptRepository', () => {
         orderBy: { createdAt: 'desc' },
       })
       expect(results).toMatchObject(input)
+    })
+  })
+
+  describe('delete', () => {
+    it('deve chamar prisma.prompt.delete com where id', async () => {
+      const id = '1'
+      await repository.delete(id)
+
+      expect(prisma.prompt.delete).toHaveBeenCalledWith({
+        where: { id },
+      })
     })
   })
 })

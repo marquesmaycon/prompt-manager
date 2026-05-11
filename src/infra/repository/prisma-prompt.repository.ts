@@ -42,4 +42,8 @@ export class PrismaPromptRepository implements PromptRepository {
   async findByTitle(title: string): Promise<Prompt | null> {
     return await this.prisma.prompt.findFirst({ where: { title } })
   }
+
+  async delete(id: string) {
+    await this.prisma.prompt.delete({ where: { id } })
+  }
 }

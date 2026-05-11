@@ -4,6 +4,7 @@ import z from 'zod'
 
 import { type CreatePromptDTO, createPromptSchema } from '@/core/application/prompts/create-prompt.dto'
 import { CreatePromptUseCase } from '@/core/application/prompts/create-prompt.use-case'
+import { DeletePromptUseCase } from '@/core/application/prompts/delete-prompt.use-case'
 import { SearchPromptsUseCase } from '@/core/application/prompts/search-prompts.use-case'
 import { type UpdatePromptDTO, updatePromptSchema } from '@/core/application/prompts/update-prompt.dto'
 import { UpdatePromptUseCase } from '@/core/application/prompts/update-prompt.use-case'
