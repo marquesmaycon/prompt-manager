@@ -2,14 +2,12 @@ import '@/styles/globals.css'
 
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono, JetBrains_Mono } from 'next/font/google'
-import { NuqsAdapter } from 'nuqs/adapters/next/app'
-import { Toaster } from 'sonner'
 
 import { AppSidebar } from '@/components/sidebar/app-sidebar'
-import { ThemeProvider } from '@/components/theme-provider'
-import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
-import { TooltipProvider } from '@/components/ui/tooltip'
+import { SidebarInset, SidebarTrigger } from '@/components/ui/sidebar'
 import { cn } from '@/lib/utils'
+
+import Providers from './providers'
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
@@ -50,26 +48,17 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col">
-        <NuqsAdapter>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-            <TooltipProvider>
-              <SidebarProvider>
-                <AppSidebar />
-                <SidebarInset>
-                  <SidebarTrigger />
-                  <section className="flex h-screen px-4">
-                    <main className="relative min-w-0 flex-1 overflow-auto">
-                      <div className="mx-auto h-full max-w-full p-4 sm:p-6 md:max-w-3xl md:p-8">
-                        {children}
-                      </div>
-                    </main>
-                  </section>
-                </SidebarInset>
-              </SidebarProvider>
-              <Toaster position="top-right" />
-            </TooltipProvider>
-          </ThemeProvider>
-        </NuqsAdapter>
+        <Providers>
+          <AppSidebar />
+          <SidebarInset>
+            <SidebarTrigger />
+            <section className="flex h-screen px-4">
+              <main className="relative min-w-0 flex-1 overflow-auto">
+                <div className="mx-auto h-full max-w-full p-4 sm:p-6 md:max-w-3xl md:p-8">{children}</div>
+              </main>
+            </section>
+          </SidebarInset>
+        </Providers>
       </body>
     </html>
   )
