@@ -10,6 +10,7 @@ import { render, screen } from '@/lib/test-utils'
 const pushMock = jest.fn()
 let mockSearchParams = new URLSearchParams()
 const setQueryMock = jest.fn()
+
 jest.mock('next/navigation', () => ({
   useRouter: () => ({ push: pushMock }),
   useSearchParams: () => mockSearchParams,

@@ -1,3 +1,5 @@
+import { revalidatePath } from 'next/cache'
+
 import {
   createPromptAction,
   deletePromptAction,
@@ -6,6 +8,7 @@ import {
 } from '@/app/actions/prompt.actions'
 
 jest.mock('@/lib/prisma', () => ({ prisma: {} }))
+jest.mock('next/cache', () => ({ revalidatePath: jest.fn() }))
 
 const mockedSearchExecute = jest.fn()
 const mockedCreateExecute = jest.fn()
@@ -112,6 +115,7 @@ describe('Prompt Actions', () => {
 
       expect(result?.success).toBe(true)
       expect(result?.message).toBe('Prompt successfully created.')
+      expect(revalidatePath).toHaveBeenCalledTimes(1)
     })
 
     it('should return validation error when payload fields is empty', async () => {
@@ -163,6 +167,7 @@ describe('Prompt Actions', () => {
         success: true,
         message: 'Prompt successfully updated.',
       })
+      expect(revalidatePath).toHaveBeenCalledTimes(1)
     })
 
     it('deve retornar erro de validação quando os campos faltarem', async () => {
@@ -219,6 +224,7 @@ describe('Prompt Actions', () => {
 
       expect(result.success).toBe(true)
       expect(result.message).toBe('Prompt successfully deleted.')
+      expect(revalidatePath).toHaveBeenCalledTimes(1)
     })
 
     it('deve retornar erro quando o id for vazio', async () => {

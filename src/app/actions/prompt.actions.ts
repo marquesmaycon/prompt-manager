@@ -1,5 +1,6 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import z from 'zod'
 
 import { type CreatePromptDTO, createPromptSchema } from '@/core/application/prompts/create-prompt.dto'
@@ -34,6 +35,7 @@ export async function createPromptAction(data: CreatePromptDTO): Promise<FormSta
     const useCase = new CreatePromptUseCase(repository)
 
     await useCase.execute(validated.data)
+    revalidatePath('/', 'layout')
   } catch (err) {
     if ((err as Error).message === 'PROMPT_ALREADY_EXISTS') {
       return { success: false, message: 'Prompt already exists.' }
@@ -55,6 +57,7 @@ export async function updatePromptAction(data: UpdatePromptDTO): Promise<FormSta
     const useCase = new UpdatePromptUseCase(repository)
 
     await useCase.execute(validated.data)
+    revalidatePath('/', 'layout')
   } catch (err) {
     if ((err as Error).message === 'NOT_FOUND') {
       return { success: false, message: 'Prompt not found.' }
@@ -95,6 +98,7 @@ export async function deletePromptAction(id: string): Promise<FormState> {
     const useCase = new DeletePromptUseCase(repository)
 
     await useCase.execute(id)
+    revalidatePath('/', 'layout')
   } catch (err) {
     if ((err as Error).message === 'NOT_FOUND') {
       return { success: false, message: 'Prompt not found.' }
