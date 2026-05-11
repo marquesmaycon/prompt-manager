@@ -2,7 +2,9 @@ import { SpinnerIcon } from '@phosphor-icons/react'
 import { TrashIcon } from '@phosphor-icons/react/dist/ssr'
 import Link from 'next/link'
 import { useState } from 'react'
+import { toast } from 'sonner'
 
+import { deletePromptAction } from '@/app/actions/prompt.actions'
 import type { PromptSummary } from '@/core/domain/prompts/prompt.entity'
 
 import {
@@ -28,6 +30,12 @@ export function PromptListItem({ prompt: { id, title, content } }: PromptListIte
 
   const handleDelete = async () => {
     setIsDeleting(true)
+    const res = await deletePromptAction(id)
+
+    const toastFn = res.success ? toast.success : toast.error
+    toastFn(res.message)
+
+    setIsDeleting(false)
   }
 
   return (
@@ -46,7 +54,6 @@ export function PromptListItem({ prompt: { id, title, content } }: PromptListIte
             variant="destructive"
             title="Delete Prompt"
             aria-label="Delete Prompt"
-            onClick={() => setIsDeleting(true)}
           >
             <TrashIcon />
           </Button>
@@ -60,7 +67,8 @@ export function PromptListItem({ prompt: { id, title, content } }: PromptListIte
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} disabled={isDeleting}>
-              {isDeleting ? <SpinnerIcon className="animate-spin" /> : 'Delete Forever'}
+              {!!isDeleting && <SpinnerIcon className="animate-spin" />}
+              Delete Forever
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -83,3 +83,22 @@ export async function searchPromptAction(_: SearchFormState, formData: FormData)
     return { success: false, message: 'Falha ao buscar prompts.' }
   }
 }
+
+export async function deletePromptAction(id: string): Promise<FormState> {
+  if (!id) {
+    return { success: false, message: 'Id do prompt é obrigatório' }
+  }
+
+  try {
+    const repository = new PrismaPromptRepository(prisma)
+    const useCase = new DeletePromptUseCase(repository)
+
+    await useCase.execute(id)
+  } catch (err) {
+    if ((err as Error).message === 'NOT_FOUND') {
+      return { success: false, message: 'Prompt not found.' }
+    }
+    return { success: false, message: 'Failed to delete prompt.' }
+  }
+  return { success: true, message: 'Prompt successfully deleted.' }
+}

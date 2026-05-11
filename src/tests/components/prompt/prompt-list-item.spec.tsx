@@ -1,10 +1,24 @@
 import userEvent from '@testing-library/user-event'
+import { mocked } from 'jest-mock'
+import { toast } from 'sonner'
 
+import { deletePromptAction } from '@/app/actions/prompt.actions'
 import { PromptListItem, type PromptListItemProps } from '@/components/prompts/prompt-list-item'
 import { render, screen } from '@/lib/test-utils'
 
+jest.mock('sonner', () => ({ toast: { success: jest.fn(), error: jest.fn() } }))
+jest.mock('@/app/actions/prompt.actions', () => ({ deletePromptAction: jest.fn() }))
+
+const toastMock = mocked(toast)
+const deletePromptActionMock = mocked(deletePromptAction)
+
 const makeSut = ({ prompt }: PromptListItemProps) => {
-  return render(<PromptListItem prompt={prompt} />)
+  render(<PromptListItem prompt={prompt} />)
+
+  const deleteButton = screen.getByRole('button', { name: /delete prompt/i })
+  const confirmButton = () => screen.getByRole('button', { name: /delete forever/i })
+
+  return { deleteButton, confirmButton }
 }
 
 describe('PromptCard', () => {
@@ -20,11 +34,33 @@ describe('PromptCard', () => {
   })
 
   it('deveria abrir o dialog de remoção de um prompt', async () => {
-    makeSut({ prompt })
+    const { deleteButton, confirmButton } = makeSut({ prompt })
 
-    const deleteButton = screen.getByRole('button', { name: 'Delete Prompt' })
     await user.click(deleteButton)
 
-    expect(screen.getByText('Delete Prompt')).toBeInTheDocument()
+    expect(confirmButton()).toBeInTheDocument()
+  })
+
+  it('deveria remover com sucesso e exibir o toast', async () => {
+    const errorMessage = 'Prompt deleted'
+    deletePromptActionMock.mockResolvedValue({ success: true, message: errorMessage })
+    const { confirmButton, deleteButton } = makeSut({ prompt })
+
+    await user.click(deleteButton)
+    await user.click(confirmButton())
+
+    expect(toastMock.success).toHaveBeenCalledWith(errorMessage)
+  })
+
+  it('deveria exibir erro quando a action falhar', async () => {
+    const errorMessage = 'Erro ao remover prompt'
+    deletePromptActionMock.mockResolvedValue({ success: false, message: errorMessage })
+
+    const { confirmButton, deleteButton } = makeSut({ prompt })
+
+    await user.click(deleteButton)
+    await user.click(confirmButton())
+
+    expect(toastMock.error).toHaveBeenCalledWith(errorMessage)
   })
 })

@@ -98,7 +98,7 @@ describe('PrismaPromptRepository', () => {
     })
   })
 
-  describe.only('findById', () => {
+  describe('findById', () => {
     it('deve retornar um Prompt quando existir', async () => {
       const now = new Date()
       const input = {

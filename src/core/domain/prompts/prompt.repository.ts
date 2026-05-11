@@ -10,4 +10,5 @@ export interface PromptRepository {
   findById(id: string): Promise<Prompt | null>
   findByTitle(title: string): Promise<Prompt | null>
   searchMany(term: string): Promise<Prompt[]>
+  delete(id: string): Promise<null>
 }
