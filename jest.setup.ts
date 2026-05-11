@@ -11,3 +11,5 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: jest.fn(),
   }),
 })
+
+jest.mock('next/navigation', () => ({ useRouter: () => ({ refresh: jest.fn() }) }))

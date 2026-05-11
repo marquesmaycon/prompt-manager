@@ -1,6 +1,7 @@
 import { SpinnerIcon } from '@phosphor-icons/react'
 import { TrashIcon } from '@phosphor-icons/react/dist/ssr'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
@@ -26,16 +27,21 @@ export type PromptListItemProps = {
 }
 
 export function PromptListItem({ prompt: { id, title, content } }: PromptListItemProps) {
+  const router = useRouter()
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleDelete = async () => {
     setIsDeleting(true)
     const res = await deletePromptAction(id)
 
-    const toastFn = res.success ? toast.success : toast.error
-    toastFn(res.message)
+    if (!res.success) {
+      toast.error(res.message)
+      return
+    }
 
+    toast.success(res.message)
     setIsDeleting(false)
+    router.refresh()
   }
 
   return (

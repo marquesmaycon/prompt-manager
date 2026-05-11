@@ -6,6 +6,9 @@ import { deletePromptAction } from '@/app/actions/prompt.actions'
 import { PromptListItem, type PromptListItemProps } from '@/components/prompts/prompt-list-item'
 import { render, screen } from '@/lib/test-utils'
 
+const refreshMock = jest.fn()
+
+jest.mock('next/navigation', () => ({ useRouter: () => ({ refresh: refreshMock }) }))
 jest.mock('sonner', () => ({ toast: { success: jest.fn(), error: jest.fn() } }))
 jest.mock('@/app/actions/prompt.actions', () => ({ deletePromptAction: jest.fn() }))
 
@@ -24,6 +27,10 @@ const makeSut = ({ prompt }: PromptListItemProps) => {
 describe('PromptCard', () => {
   const user = userEvent.setup()
   const prompt = { id: '1', title: 'title 01', content: 'content 01' }
+
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
 
   it('deveria renderizar o link com href corretamente', () => {
     makeSut({ prompt })
@@ -50,6 +57,7 @@ describe('PromptCard', () => {
     await user.click(confirmButton())
 
     expect(toastMock.success).toHaveBeenCalledWith(errorMessage)
+    expect(refreshMock).toHaveBeenCalledTimes(1)
   })
 
   it('deveria exibir erro quando a action falhar', async () => {
@@ -62,5 +70,6 @@ describe('PromptCard', () => {
     await user.click(confirmButton())
 
     expect(toastMock.error).toHaveBeenCalledWith(errorMessage)
+    expect(refreshMock).not.toHaveBeenCalled()
   })
 })
