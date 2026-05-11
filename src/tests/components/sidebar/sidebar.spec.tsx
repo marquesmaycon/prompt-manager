@@ -1,4 +1,5 @@
 import userEvent from '@testing-library/user-event'
+import { useState } from 'react'
 
 import { AppSidebar } from '@/components/sidebar/app-sidebar'
 import { AppSidebarContent } from '@/components/sidebar/sidebar-content'
@@ -8,10 +9,23 @@ import { render, screen } from '@/lib/test-utils'
 
 const pushMock = jest.fn()
 let mockSearchParams = new URLSearchParams()
-
+const setQueryMock = jest.fn()
 jest.mock('next/navigation', () => ({
   useRouter: () => ({ push: pushMock }),
   useSearchParams: () => mockSearchParams,
+}))
+
+jest.mock('nuqs', () => ({
+  useQueryState: (key: string) => {
+    const [value, setValue] = useState(mockSearchParams.get(key) ?? '')
+
+    const setQuery = (nextValue: string) => {
+      setQueryMock(nextValue)
+      setValue(nextValue)
+    }
+
+    return [value, setQuery] as const
+  },
 }))
 
 jest.mock('@/lib/prisma', () => ({
@@ -90,10 +104,10 @@ describe('Sidebar', () => {
       const searchInput = await screen.findByPlaceholderText(/Search Prompts/i)
 
       await user.type(searchInput, text)
-      expect(pushMock).toHaveBeenLastCalledWith(`/?q=${encodeURIComponent(text)}`)
+      expect(setQueryMock).toHaveBeenLastCalledWith(text)
 
       await user.clear(searchInput)
-      expect(pushMock).toHaveBeenLastCalledWith('/')
+      expect(setQueryMock).toHaveBeenLastCalledWith('')
     })
 
     it('should initialize the search input with the query parameter from the URL', async () => {

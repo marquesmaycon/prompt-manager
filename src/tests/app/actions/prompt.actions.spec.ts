@@ -210,7 +210,7 @@ describe('Prompt Actions', () => {
     })
   })
 
-  describe.only('deletePromptAction', () => {
+  describe('deletePromptAction', () => {
     it('deve remover com sucesso', async () => {
       mockedDeleteExecute.mockResolvedValue(undefined)
       const promptId = '1'

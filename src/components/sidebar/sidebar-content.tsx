@@ -2,9 +2,8 @@
 
 import { CommandIcon, MagnifyingGlassIcon, PlusCircleIcon } from '@phosphor-icons/react'
 import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
-import { useRouter } from 'next/navigation'
-import { startTransition, useActionState, useEffect, useRef, useState } from 'react'
+import { useQueryState } from 'nuqs'
+import { startTransition, useActionState, useEffect, useRef } from 'react'
 
 import { searchPromptAction } from '@/app/actions/prompt.actions'
 import type { PromptSummary } from '@/core/domain/prompts/prompt.entity'
@@ -33,15 +32,12 @@ export type AppSidebarContentProps = {
 }
 
 export function AppSidebarContent({ prompts }: AppSidebarContentProps) {
-  const router = useRouter()
-  const searchParams = useSearchParams()
   const formRef = useRef<HTMLFormElement>(null)
 
   const { open } = useSidebar()
 
   const [searchState, action, isPending] = useActionState(searchPromptAction, { success: true, prompts })
-  const [query, setQuery] = useState(searchParams.get('q') ?? '')
-
+  const [query, setQuery] = useQueryState('q', { defaultValue: '' })
   const hasQuery = query.trim().length > 0
 
   useEffect(() => {
@@ -56,8 +52,6 @@ export function AppSidebarContent({ prompts }: AppSidebarContentProps) {
     setQuery(value)
 
     startTransition(() => {
-      const url = value ? `/?q=${encodeURIComponent(value)}` : '/'
-      router.push(url)
       formRef.current?.requestSubmit()
     })
   }
